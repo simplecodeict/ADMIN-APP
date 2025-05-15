@@ -227,7 +227,7 @@
 					<!--//app-menu-->
 				</nav>
 				<!--//app-nav-->
-				<p style="text-align: center; padding: 0px;">© 2024. Sewanagala Ayurwedaya</p>
+				<p style="text-align: center; padding: 0px;">© 2024. Manu Ayurwedaya</p>
 				<small style="text-align: center; padding-bottom: 20px; margin-top: -10px;" class="copyright">Developed
 					by |
 					<a class="app-link" href="#">SimpleCodeICT</a>
@@ -504,8 +504,16 @@
 								<div class="col-auto">
 									<form class="docs-search-form row gx-1 align-items-center" id="searchForm">
 										<div class="col-auto">
+											<input type="text" id="search-docs-id" name="searchdocs"
+												class="form-control search-docs" placeholder="Enter Item ID" />
+										</div>
+									</form>
+								</div>
+								<div class="col-auto">
+									<form class="docs-search-form row gx-1 align-items-center" id="searchForm">
+										<div class="col-auto">
 											<input type="text" id="search-docs" name="searchdocs"
-												class="form-control search-docs" placeholder="Search" />
+												class="form-control search-docs" placeholder="Enter Item Name" />
 										</div>
 										<div class="col-auto">
 											<button type="submit" class="btn btn-secondary">Search</button>
@@ -518,14 +526,6 @@
 										<option value="">Select shop</option>
 									</select>
 								</div>
-								<!-- <div class="col-auto">
-									<select class="form-select w-auto" id="productType_for_search">
-										<option value="" selected>Select Product Type</option>
-										<option value="G">G</option>
-										<option value="QTY">QTY</option>
-										<option value="Kalang">Kalang</option>
-									</select>
-								</div> -->
 								<div class="col-auto">
 									<button class="btn btn-secondary" data-toggle="modal" data-target="#myModal">Add New
 										Product</button>
@@ -618,6 +618,7 @@
 				const loaderContainer = document.getElementById('loaderContainer');
 				const searchForm = document.getElementById('searchForm');
 				const searchInput = document.getElementById('search-docs');
+				const searchInputID = document.getElementById('search-docs-id');
 
 				const nextPageButton = document.getElementById('nextPage');
 				const previousPageButton = document.getElementById('previousPage');
@@ -641,7 +642,7 @@
 
 					}
 				}
-				function loadItems(shop_id = '', shop_name = '', page = 1) {
+				function loadItems(shop_id = '', shop_name = '', item_id='', page = 1) {
 					loaderContainer.classList.add('active');
 					let url = "/api/items";
 
@@ -655,6 +656,9 @@
 					}
 					if (shop_name) {
 						params['filter[name]'] = shop_name;
+					}
+					if (item_id) {
+						params['filter[item_id]'] = item_id;
 					}
 					AxiosInstance.get(url, { params })
 						.then(response => {
@@ -808,7 +812,8 @@
 				shopSelect.addEventListener('change', function () {
 					const shop_id = shopSelect.value;
 					const shop_name = searchInput.value.trim();
-					loadItems(shop_id, shop_name); // Reload items based on selected shop ID and search input
+					const item_id = searchInputID.value.trim();
+					loadItems(shop_id, shop_name, item_id); // Reload items based on selected shop ID and search input
 				});
 
 				// Event listener for search form submission
@@ -817,7 +822,8 @@
 
 					const shop_id = shopSelect.value;
 					const shop_name = searchInput.value.trim();
-					loadItems(shop_id, shop_name); // Reload items based on selected shop ID and search input
+					const item_id = searchInputID.value.trim();
+					loadItems(shop_id, shop_name, item_id); // Reload items based on selected shop ID and search input
 				});
 				// Handle form submission
 				document.getElementById('productForm').addEventListener('submit', async function (event) {
