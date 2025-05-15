@@ -9,12 +9,12 @@
   "scripts": {
     "start": "electron .",
     "dev": "nodemon --watch . --exec \"electron .\"",
-    "build": "electron-packager . Sewanagala-Ayurveda --platform=win32 --arch=x64 --out=dist --overwrite",
+    "build": "electron-packager . Manu-Ayurveda --platform=win32 --arch=x64 --out=dist --overwrite",
     "test": "echo \"Error: no test specified\" && exit 1",
     "electron-pack": "electron-builder"
   },
   "build": {
-    "productName": "Sewanagala Ayurvedaya Inventory Management System",
+    "productName": "Manu Ayurvedaya Inventory Management System",
     "directories": {
       "buildResources": "assets",
       "output": "dist"
