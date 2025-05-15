@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Manu Ayurvedaya Inventory Management System</title>
+
+	<!-- Meta -->
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<meta name="description" content="Portal - Bootstrap 5 Admin Dashboard Template For Developers" />
+	<meta name="author" content="Xiaoying Riley at 3rd Wave Media" />
+	<link rel="shortcut icon" href="assets/images/icon.ico" />
+
+	<!-- FontAwesome JS-->
+	<script defer src="assets/plugins/fontawesome/js/all.min.js"></script>
+
+	<!-- App CSS -->
+	<link id="theme-style" rel="stylesheet" href="assets/css/portal.css" />
+	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+
+	<style>
+		/* Center loader and button */
+		.loader-container {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(255, 255, 255, 0.5);
+			/* Semi-transparent gray overlay */
+			display: none;
+			/* Initially hidden */
+			justify-content: center;
+			align-items: center;
+			z-index: 1000;
+			backdrop-filter: blur(3px);
+		}
+
+		.loader-container.active {
+			display: flex;
+			/* Show loader when active */
+		}
+
+		/* Loader styling */
+		.loader {
+			max-width: 10%;
+			/* Adjust size of the loader */
+			height: auto;
+		}
+
+		/* Center loader within loader container */
+		.loader img {
+			display: block;
+			margin: 0 auto;
+		}
+
+		.modal-overlay-2 {
+			position: fixed;
+			/* Use fixed positioning to cover the entire screen */
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(255, 255, 255, 0.5);
+			/* Semi-transparent background */
+			display: none;
+			align-items: center;
+			justify-content: center;
+			z-index: 1000;
+			backdrop-filter: blur(3px);
+			/* High z-index to ensure it appears above other elements */
+		}
+
+		/* Style for the modal content */
+		.modal-content-2 {
+			background-color: #fff;
+			padding: 20px;
+			border-radius: 5px;
+			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+			text-align: center;
+		}
+
+		/* Style for the modal buttons */
+		.modal-buttons-2 {
+			display: flex;
+			justify-content: space-around;
+			margin-top: 20px;
+		}
+
+		/* Optional: Style for the buttons */
+		.btn {
+			padding: 10px 20px;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+		}
+
+		.btn-confirm {
+			background-color: #28a745;
+			color: white;
+		}
+
+		.btn-cancel {
+			background-color: #dc3545;
+			color: white;
+		}
+
+		.date-time-container {
+			position: relative;
+			right: 0;
+			top: 0;
+			padding: 10px;
+			font-family: Arial, sans-serif;
+			font-weight: 700;
+			font-size: 16px;
+		}
+	</style>
+
+
+</head>
+
+<body class="app">
+
+	<div class="modal-overlay-2" id="confirmationModal">
+		<div class="modal-content-2">
+			<p>Are you sure you want to delete this product?</p>
+			<div class="modal-buttons-2">
+				<button class="btn btn-confirm" id="confirmBtn">Confirm</button>
+				<button class="btn btn-cancel" id="cancelBtn">Cancel</button>
+			</div>
+		</div>
+	</div>
+
+	<header class="app-header fixed-top">
+		<div class="app-header-inner">
+			<div class="container-fluid py-2">
+				<div class="app-header-content">
+					<div class="row justify-content-between align-items-center">
+						<center>
+							<div class="date-time-container" id="date-time-container"></div>
+						</center>
+						<div class="col-auto">
+							<a id="sidepanel-toggler" class="sidepanel-toggler d-inline-block d-xl-none" href="#">
+								<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30"
+									role="img">
+									<title>Menu</title>
+									<path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10"
+										stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path>
+								</svg>
+							</a>
+						</div>
+						<!--//col-->
+						<div class="search-mobile-trigger d-sm-none col">
+							<i class="search-mobile-trigger-icon fa-solid fa-magnifying-glass"></i>
+						</div>
+					</div>
+					<!--//row-->
+				</div>
+				<!--//app-header-content-->
+			</div>
+			<!--//container-fluid-->
+		</div>
+		<!--//app-header-inner-->
+		<div id="app-sidepanel" class="app-sidepanel">
+			<div id="sidepanel-drop" class="sidepanel-drop"></div>
+			<div class="sidepanel-inner d-flex flex-column">
+				<a href="#" id="sidepanel-close" class="sidepanel-close d-xl-none">&times;</a>
+				<div class="app-branding">
+					<a class="app-logo" href="index.html"><img
+							style="width: 175px; height: 90px; margin-bottom: 20px; margin-left: 15px; padding-top: 30px;"
+							src="assets/images/logo_en.png" alt="logo" /></a>
+				</div>
+				<!--//app-branding-->
+				<nav id="app-nav-main" class="app-nav app-nav-main flex-grow-1" style="margin-top: 120px;">
+					<ul class="app-menu list-unstyled accordion" id="menu-accordion" style="line-height: 80px;">
+						<li class="nav-item">
+							<a class="nav-link" href="index.html">
+								<span class="nav-icon">
+									<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-house-door"
+										fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+										<path fill-rule="evenodd"
+											d="M7.646 1.146a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 .146.354v7a.5.5 0 0 1-.5.5H9.5a.5.5 0 0 1-.5-.5v-4H7v4a.5.5 0 0 1-.5.5H2a.5.5 0 0 1-.5-.5v-7a.5.5 0 0 1 .146-.354l6-6zM2.5 7.707V14H6v-4a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v4h3.5V7.707L8 2.207l-5.5 5.5z" />
+										<path fill-rule="evenodd"
+											d="M13 2.5V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z" />
+									</svg>
+								</span>
+								<span class="nav-link-text">Dashboard</span> </a><!--//nav-link-->
+						</li>
+						<!--//nav-item-->
+						<li class="nav-item">
+							<!--//Bootstrap Icons: https://icons.getbootstrap.com/ -->
+							<a class="nav-link active" href="products.html">
+								<span class="nav-icon">
+									<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-columns-gap"
+										fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+										<path fill-rule="evenodd"
+											d="M6 1H1v3h5V1zM1 0a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1H1zm14 12h-5v3h5v-3zm-5-1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-5zM6 8H1v7h5V8zM1 7a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H1zm14-6h-5v7h5V1zm-5-1a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1h-5z" />
+									</svg>
+								</span>
+								<span class="nav-link-text">Products</span> </a><!--//nav-link-->
+						</li>
+						<!--//nav-item-->
+						<li class="nav-item">
+							<!--//Bootstrap Icons: https://icons.getbootstrap.com/ -->
+							<a class="nav-link" href="orders.html">
+								<span class="nav-icon">
+									<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-card-list"
+										fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+										<path fill-rule="evenodd"
+											d="M14.5 3h-13a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z" />
+										<path fill-rule="evenodd"
+											d="M5 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 5 8zm0-2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm0 5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5z" />
+										<circle cx="3.5" cy="5.5" r=".5" />
+										<circle cx="3.5" cy="8" r=".5" />
+										<circle cx="3.5" cy="10.5" r=".5" />
+									</svg>
+								</span>
+								<span class="nav-link-text">Orders</span> </a><!--//nav-link-->
+						</li>
+
+
+						<!--//nav-item-->
+					</ul>
+					<!--//app-menu-->
+				</nav>
+				<!--//app-nav-->
+				<p style="text-align: center; padding: 0px;">© 2024. Sewanagala Ayurwedaya</p>
+				<small style="text-align: center; padding-bottom: 20px; margin-top: -10px;" class="copyright">Developed
+					by |
+					<a class="app-link" href="#">SimpleCodeICT</a>
+				</small>
+				<div class="app-sidepanel-footer">
+					<nav class="app-nav app-nav-footer">
+						<ul class="app-menu footer-menu list-unstyled">
+
+							<!--//nav-item-->
+							<li class="nav-item">
+								<!--//Bootstrap Icons: https://icons.getbootstrap.com/ -->
+								<a class="nav-link" href="login.html">
+									<span class="nav-icon">
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+											fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+											<path fill-rule="evenodd"
+												d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z" />
+											<path fill-rule="evenodd"
+												d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z" />
+										</svg>
+									</span>
+									<span class="nav-link-text">Log Out</span> </a><!--//nav-link-->
+							</li>
+							<!--//nav-item-->
+						</ul>
+						<!--//footer-menu-->
+					</nav>
+				</div>
+				<!--//app-sidepanel-footer-->
+			</div>
+			<!--//sidepanel-inner-->
+		</div>
+		<!--//app-sidepanel-->
+	</header>
+	<!--//app-header-->
+
+	<div id="loaderContainer" class="loader-container">
+		<!-- GIF Loader -->
+		<img src="assets/images/loader.gif" class="loader" alt="Loading GIF">
+	</div>
+
+
+	<div class="app-wrapper">
+		<div class="app-content pt-3 p-md-3 p-lg-4">
+			<div class="container-xl">
+				<div class="row g-3 mb-4 align-items-center justify-content-between">
+					<!-- Modal -->
+					<div class="modal fade" id="myModal" tabindex="-1" srole="dialog"
+						aria-labelledby="exampleModalLabel" aria-hidden="true">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="exampleModalLabel">Add Product</h5>
+									<button type="button" class="btn btn-outline-secondary" data-dismiss="modal"
+										aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									<div class="app-card-body">
+										<form id="productForm" class="settings-form">
+											<div class="row">
+												<div class="col-md-6">
+													<div class="mb-3">
+														<label for="setting-input-1" class="form-label">Product ID*<span
+																class="ms-2" data-bs-container="body"
+																data-bs-toggle="popover" data-bs-trigger="hover focus"
+																data-bs-placement="top"
+																data-bs-content="This is a Bootstrap popover example. You can use popover to provide extra info."></span></label>
+														<input type="text" class="form-control" id="productId"
+															placeholder="Enter Product ID" required>
+													</div>
+												</div>
+												<div class="col-md-6">
+													<div class="mb-3">
+														<label for="setting-input-2" class="form-label">Product
+															Name*</label>
+														<input type="text" class="form-control" id="productName"
+															placeholder="Enter Product Name" required>
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-md-6">
+													<div class="mb-3">
+														<label for="setting-input-3" class="form-label">Type*</label>
+														<select class="form-select w-auto" id="productType">
+															<option value="" disabled selected>Select Product Type
+															</option>
+															<option value="G">G</option>
+															<option value="L">L</option>
+															<option value="ML">ML</option>
+															<option value="QTY">QTY</option>
+														</select>
+													</div>
+												</div>
+
+												<div class="col-md-6">
+													<div class="mb-3">
+														<label for="setting-input-3"
+															class="form-label">Quaintity*</label>
+														<input type="number" step="0.01" class="form-control" id="qty"
+															min="0" placeholder="Enter Quaintity" required>
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-md-6">
+													<div class="mb-3">
+														<label for="setting-input-3" class="form-label">Actual
+															Price*</label>
+														<input type="number" class="form-control" id="actualPrice"
+															min="0" step="0.01" placeholder="Enter Actual Price"
+															required>
+													</div>
+												</div>
+												<div class="col-md-6">
+													<div class="mb-3">
+														<label for="setting-input-3" class="form-label">Selling
+															Price*</label>
+														<input type="number" class="form-control" id="sellingPrice"
+															min="0" step="0.01" placeholder="Enter Selling Price"
+															required>
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-md-12">
+
+													<label for="setting-input-3" class="form-label">Shop*</label>
+													<select class="form-select w-auto" id="shop">
+
+													</select>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-md-6">
+												</div>
+												<div class="col-md-6">
+													<div class="mb-3">
+														<br>
+														<button type="button" class="btn btn-secondary"
+															data-dismiss="modal">Close</button>
+														<button type="submit" class="btn app-btn-primary">Add
+															Product</button>
+													</div>
+												</div>
+											</div>
+
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="modal fade" id="myModal2" tabindex="-1" role="dialog"
+						aria-labelledby="exampleModalLabel2" aria-hidden="true">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="exampleModalLabel2">Update Product</h5>
+									<button type="button" class="btn btn-outline-secondary" data-dismiss="modal"
+										aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									<div class="app-card-body">
+										<form id="productUpdateForm" class="settings-form">
+											<div class="row">
+												<div class="col-md-6">
+													<div class="mb-3">
+														<label for="setting-input-1" class="form-label">Product ID*<span
+																class="ms-2" data-bs-container="body"
+																data-bs-toggle="popover" data-bs-trigger="hover focus"
+																data-bs-placement="top"
+																data-bs-content="This is a Bootstrap popover example. You can use popover to provide extra info."></span></label>
+														<input type="text" class="form-control" id="updateProductId"
+															placeholder="Enter Product ID" required>
+													</div>
+												</div>
+												<div class="col-md-6">
+													<div class="mb-3">
+														<label for="setting-input-2" class="form-label">Product
+															Name*</label>
+														<input type="text" class="form-control" id="updateProductName"
+															placeholder="Enter Product Name" required>
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-md-6">
+													<div class="mb-3">
+														<label for="setting-input-3" class="form-label">Type*</label>
+														<select class="form-select w-auto" id="updateProductType">
+															<option value="" disabled selected>Select Product Type
+															</option>
+															<option value="G">G</option>
+															<option value="L">L</option>
+															<option value="ML">ML</option>
+															<option value="QTY">QTY</option>
+														</select>
+													</div>
+												</div>
+
+												<div class="col-md-6">
+													<div class="mb-3">
+														<label for="setting-input-3"
+															class="form-label">Quaintity*</label>
+														<input type="number" class="form-control" step="0.01"
+															id="updateQty" min="0" placeholder="Enter Quaintity"
+															required>
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-md-6">
+													<div class="mb-3">
+														<label for="setting-input-3" class="form-label">Actual
+															Price*</label>
+														<input type="number" class="form-control" id="updateActualPrice"
+															step="0.01" min="0" placeholder="Enter Actual Price"
+															required>
+													</div>
+												</div>
+												<div class="col-md-6">
+													<div class="mb-3">
+														<label for="setting-input-3" class="form-label">Selling
+															Price*</label>
+														<input type="number" class="form-control"
+															id="updateSellingPrice" step="0.01" min="0"
+															placeholder="Enter Selling Price" required>
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-md-6">
+													<div class="mb-3">
+														<label for="setting-input-3" class="form-label">Shop*</label>
+														<select class="form-select w-auto" id="updateShop">
+
+														</select>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-md-6">
+													</div>
+													<div class="col-md-6">
+														<div class="mb-3">
+															<br>
+															<button type="submit" class="btn app-btn-primary">Save
+																Changes</button>
+															<button type="button" class="btn btn-secondary"
+																data-dismiss="modal">Close</button>
+														</div>
+													</div>
+												</div>
+											</div>
+									</div>
+
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-auto">
+						<h1 class="app-page-title mb-0">Products</h1>
+					</div>
+					<div class="col-auto">
+						<div class="page-utilities">
+							<div class="row g-2 justify-content-start justify-content-md-end align-items-center">
+								<div class="col-auto">
+									<form class="docs-search-form row gx-1 align-items-center" id="searchForm">
+										<div class="col-auto">
+											<input type="text" id="search-docs" name="searchdocs"
+												class="form-control search-docs" placeholder="Search" />
+										</div>
+										<div class="col-auto">
+											<button type="submit" class="btn btn-secondary">Search</button>
+										</div>
+									</form>
+								</div>
+								<!--//col-->
+								<div class="col-auto">
+									<select class="form-select w-auto" id="shop_for_search">
+										<option value="">Select shop</option>
+									</select>
+								</div>
+								<!-- <div class="col-auto">
+									<select class="form-select w-auto" id="productType_for_search">
+										<option value="" selected>Select Product Type</option>
+										<option value="G">G</option>
+										<option value="QTY">QTY</option>
+										<option value="Kalang">Kalang</option>
+									</select>
+								</div> -->
+								<div class="col-auto">
+									<button class="btn btn-secondary" data-toggle="modal" data-target="#myModal">Add New
+										Product</button>
+								</div>
+								<div class="col-auto">
+									<button class="btn app-btn-primary" id="downloadPdf"><svg width="1em" height="1em"
+											viewBox="0 0 16 16" class="bi bi-download me-1" fill="currentColor"
+											xmlns="http://www.w3.org/2000/svg">
+											<path fill-rule="evenodd"
+												d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
+											<path fill-rule="evenodd"
+												d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z" />
+										</svg>Download Report</button>
+								</div>
+							</div>
+							<!--//row-->
+						</div>
+						<!--//table-utilities-->
+					</div>
+					<!--//col-auto-->
+				</div>
+			</div>
+			<!--//row-->
+			<div class="tab-content" id="orders-table-tab-content">
+				<div class="tab-pane fade show active" id="orders-all" role="tabpanel" aria-labelledby="orders-all-tab">
+					<div class="app-card app-card-orders-table shadow-sm mb-5">
+						<div class="app-card-body">
+							<div class="table-responsive" style="padding-left: 20px; padding-top: 10px;">
+								<table id="table" class="table app-table-hover mb-0 text-left">
+									<thead>
+										<tr>
+											<th class="cell">No</th>
+											<th class="cell">Item ID</th>
+											<th class="cell">Name</th>
+											<th class="cell">Type</th>
+											<th class="cell">Qty</th>
+											<th class="cell">Selling Price</th>
+											<th class="cell">Actual Price</th>
+											<th class="cell">Shop</th>
+											<th class="cell">Action</th>
+										</tr>
+									</thead>
+									<tbody id="items-table-body">
+										<!-- Data will be injected here -->
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+					<!--//app-card-->
+					<nav class="app-pagination">
+						<ul class="pagination justify-content-center">
+							<li class="page-item">
+								<button class="page-link" id="previousPage">Previous</button>
+							</li>
+							<li class="page-item">
+								<button class="page-link" id="nextPage">Next</button>
+							</li>
+						</ul>
+					</nav>
+				</div>
+			</div>
+
+
+
+
+
+			<!-- Javascript -->
+			<script src="assets/plugins/popper.min.js"></script>
+			<script src="assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+
+
+			<!-- Bootstrap JS and dependencies -->
+			<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+			<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+			<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+			<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+			<script
+				src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+			<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+			<script src="axiosConfig.js"></script>
+
+			<script>
+				const tableBody = document.getElementById('items-table-body');
+				const shopSelect = document.getElementById('shop_for_search');
+				const shopSelectModel = document.getElementById('shop');
+				const shopSelectUpdateModel = document.getElementById('updateShop');
+
+				const loaderContainer = document.getElementById('loaderContainer');
+				const searchForm = document.getElementById('searchForm');
+				const searchInput = document.getElementById('search-docs');
+
+				const nextPageButton = document.getElementById('nextPage');
+				const previousPageButton = document.getElementById('previousPage');
+
+
+				let currentPageIndex = 1
+				let itemID = 0
+
+				function updatePagination(currentPage, last_page) {
+					console.log('ava')
+					currentPageIndex = currentPage
+					if (currentPage == 1) {
+						previousPageButton.disabled = true
+						nextPageButton.disabled = false
+
+					}
+
+					if (currentPage == last_page) {
+						previousPageButton.disabled = false
+						nextPageButton.disabled = true
+
+					}
+				}
+				function loadItems(shop_id = '', shop_name = '', page = 1) {
+					loaderContainer.classList.add('active');
+					let url = "/api/items";
+
+					// Prepare query parameters based on shop ID and shop name
+					const params = {
+						limit: 10,
+						page: page
+					};
+					if (shop_id) {
+						params['filter[shop_id]'] = shop_id;
+					}
+					if (shop_name) {
+						params['filter[name]'] = shop_name;
+					}
+					AxiosInstance.get(url, { params })
+						.then(response => {
+							const items = response.data.data; // Adjust this based on your API response structure
+							let rows = '';
+
+							items.forEach((item, index) => {
+								rows += `
+										<tr>
+											<td class="cell">${index + 1}</td>
+											<td class="cell">${item.item_id}</td>
+											<td class="cell">${item.name}</td>
+											<td class="cell">${item.type}</td>
+											<td class="cell">${item.num_of_items}</td>
+											<td class="cell">LKR ${item.selling_price_per_unit}</td>
+											<td class="cell">LKR ${item.actual_price_per_unit}</td>
+											<td class="cell">${item.shop.name}</td>
+											<td class="cell">
+												<a class="btn btn-secondary-sm edit-button"
+													data-id="${item.id}"
+													data-item-id="${item.item_id}"
+													data-name="${item.name}"
+													data-type="${item.type}"
+													data-quantity="${item.num_of_items}"
+													data-selling-price="${item.selling_price_per_unit}"
+													data-actual-price="${item.actual_price_per_unit}"
+													data-shop="${item.shop.id}"
+													data-toggle="modal" data-target="#myModal2">
+													<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+														fill="currentColor" class="bi bi-pencil-square"
+														viewBox="0 0 16 16">
+														<path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+														<path fill-rule="evenodd"
+															d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
+													</svg>
+												</a>
+												<a class="btn btn-secondary-sm" style="color: #ff0000;"
+												onMouseOver="this.style.color='#383838'"
+												onMouseOut="this.style.color='#ff0000'" onclick="confirmDelete('${item.id}')">
+												<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+														fill="currentColor" class="bi bi-trash3"
+														viewBox="0 0 16 16">
+														<path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
+													</svg>
+												</a>
+											</td>
+										</tr>
+    								`;
+							});
+
+							tableBody.innerHTML = rows;
+							console.log(response.data.current_page, response.data.last_page)
+							updatePagination(response.data.current_page, response.data.last_page);
+							loaderContainer.classList.remove('active');
+						})
+						.catch(error => {
+							Toastify({
+								text: `❌ ${error.message}`,
+								duration: 5000,
+
+								newWindow: true,
+								close: true,
+								gravity: "top", // `top` or `bottom`
+								position: "right", // `left`, `center` or `right`
+								stopOnFocus: true, // Prevents dismissing of toast on hover
+								style: {
+									background: "#333", // Dark background color
+									color: "#fffff", // Red text color for error
+									boxShadow: "0 0 10px rgba(0, 0, 0, 0.5)", // Slight shadow for depth
+									padding: "16px", // Additional padding for better readability
+									borderRadius: "8px" // Rounded corners
+								},
+								onClick: function () { } // Callback after click
+							}).showToast();
+						});
+
+
+				}
+
+				function confirmDelete(itemId) {
+					// Show modal overlay
+					const modal = document.getElementById('confirmationModal');
+					modal.style.display = 'flex'; // Show the modal
+
+					// Handle confirm button click
+					const confirmBtn = document.getElementById('confirmBtn');
+
+					confirmBtn.addEventListener('click', async () => {
+						// Perform delete action here
+						loaderContainer.classList.add('active');
+
+						try {
+							const response = await AxiosInstance.delete(`/api/items/${itemId}`);
+							Toastify({
+								text: "✅ Product has been deleted successfully!",
+								duration: 5000,
+
+								newWindow: true,
+								close: true,
+								gravity: "top", // `top` or `bottom`
+								position: "right", // `left`, `center` or `right`
+								stopOnFocus: true, // Prevents dismissing of toast on hover
+								style: {
+									background: "#333", // Dark background color
+									color: "#00ff00", // Green text color for success
+									boxShadow: "0 0 10px rgba(0, 0, 0, 0.5)", // Slight shadow for depth
+									padding: "16px", // Additional padding for better readability
+									borderRadius: "8px" // Rounded corners
+								},
+								onClick: function () { } // Callback after click
+							}).showToast();
+							loadItems()
+						} catch (e) {
+							Toastify({
+								text: `❌ There was an error. please try again later.`,
+								duration: 5000,
+
+								newWindow: true,
+								close: true,
+								gravity: "top", // `top` or `bottom`
+								position: "right", // `left`, `center` or `right`
+								stopOnFocus: true, // Prevents dismissing of toast on hover
+								style: {
+									background: "#333", // Dark background color
+									color: "#fffff", // Red text color for error
+									boxShadow: "0 0 10px rgba(0, 0, 0, 0.5)", // Slight shadow for depth
+									padding: "16px", // Additional padding for better readability
+									borderRadius: "8px" // Rounded corners
+								},
+								onClick: function () { } // Callback after click
+							}).showToast();
+						} finally {
+							loaderContainer.classList.remove('active');
+						}
+
+						// Hide modal overlay
+						modal.style.display = 'none';
+					});
+
+					// Handle cancel button click
+					const cancelBtn = document.getElementById('cancelBtn');
+					cancelBtn.addEventListener('click', () => {
+						// Hide modal overlay
+						modal.style.display = 'none';
+						console.log("Deletion cancelled.");
+					});
+				}
+
+
+				/// Event listener for shop selection change
+				shopSelect.addEventListener('change', function () {
+					const shop_id = shopSelect.value;
+					const shop_name = searchInput.value.trim();
+					loadItems(shop_id, shop_name); // Reload items based on selected shop ID and search input
+				});
+
+				// Event listener for search form submission
+				searchForm.addEventListener('submit', function (event) {
+					event.preventDefault(); // Prevent form submission
+
+					const shop_id = shopSelect.value;
+					const shop_name = searchInput.value.trim();
+					loadItems(shop_id, shop_name); // Reload items based on selected shop ID and search input
+				});
+				// Handle form submission
+				document.getElementById('productForm').addEventListener('submit', async function (event) {
+					event.preventDefault(); // Prevent default form submission
+					// Collect form data
+					const formData = {
+						item_id: document.getElementById('productId').value,
+						name: document.getElementById('productName').value,
+						type: document.getElementById('productType').value,
+						num_of_items: parseInt(document.getElementById('qty').value),
+						selling_price_per_unit: parseFloat(document.getElementById('sellingPrice').value),
+						actual_price_per_unit: parseFloat(document.getElementById('actualPrice').value),
+						shop_id: document.getElementById('shop').value // Assuming the first option value is 1
+					};
+
+					if (formData.actual_price_per_unit > formData.selling_price_per_unit) {
+						Toastify({
+							text: "❌ Actual price can't be grater than the selling price!!",
+							duration: 5000,
+
+							newWindow: true,
+							close: true,
+							gravity: "top", // `top` or `bottom`
+							position: "right", // `left`, `center` or `right`
+							stopOnFocus: true, // Prevents dismissing of toast on hover
+							style: {
+								background: "#333", // Dark background color
+								color: "#fffff", // Red text color for error
+								boxShadow: "0 0 10px rgba(0, 0, 0, 0.5)", // Slight shadow for depth
+								padding: "16px", // Additional padding for better readability
+								borderRadius: "8px" // Rounded corners
+							},
+							onClick: function () { } // Callback after click
+						}).showToast();
+					} else {
+						loaderContainer.classList.add('active');
+
+						try {
+							// Send data using Axios with async/await
+							const response = await AxiosInstance.post('/api/items', formData);
+
+							console.log('Data sent successfully');
+							Toastify({
+								text: "✅ Product has been added successfully!",
+								duration: 5000,
+
+								newWindow: true,
+								close: true,
+								gravity: "top", // `top` or `bottom`
+								position: "right", // `left`, `center` or `right`
+								stopOnFocus: true, // Prevents dismissing of toast on hover
+								style: {
+									background: "#333", // Dark background color
+									color: "#00ff00", // Green text color for success
+									boxShadow: "0 0 10px rgba(0, 0, 0, 0.5)", // Slight shadow for depth
+									padding: "16px", // Additional padding for better readability
+									borderRadius: "8px" // Rounded corners
+								},
+								onClick: function () { } // Callback after click
+							}).showToast();
+
+							window.location.href = 'products.html'
+						} catch (error) {
+							console.log(error)
+							Toastify({
+								text: `❌ There was an error. please try again later.`,
+								duration: 5000,
+
+								newWindow: true,
+								close: true,
+								gravity: "top", // `top` or `bottom`
+								position: "right", // `left`, `center` or `right`
+								stopOnFocus: true, // Prevents dismissing of toast on hover
+								style: {
+									background: "#333", // Dark background color
+									color: "#fffff", // Red text color for error
+									boxShadow: "0 0 10px rgba(0, 0, 0, 0.5)", // Slight shadow for depth
+									padding: "16px", // Additional padding for better readability
+									borderRadius: "8px" // Rounded corners
+								},
+								onClick: function () { } // Callback after click
+							}).showToast();
+							console.error('Error sending data: ', error);
+						} finally {
+							loaderContainer.classList.remove('active');
+						}
+					}
+
+
+				});
+
+				document.getElementById('productUpdateForm').addEventListener('submit', async function (event) {
+					event.preventDefault(); // Prevent default form submission
+					// Collect form data
+					const formData = {
+						item_id: document.getElementById('updateProductId').value,
+						name: document.getElementById('updateProductName').value,
+						type: document.getElementById('updateProductType').value,
+						num_of_items: parseInt(document.getElementById('updateQty').value),
+						selling_price_per_unit: parseFloat(document.getElementById('updateSellingPrice').value),
+						actual_price_per_unit: parseFloat(document.getElementById('updateActualPrice').value),
+						shop_id: document.getElementById('updateShop').value // Assuming the first option value is 1
+					};
+
+					if (formData.actual_price_per_unit > formData.selling_price_per_unit) {
+						Toastify({
+							text: "❌ Actual price can't be grater than the selling price!!",
+							duration: 5000,
+
+							newWindow: true,
+							close: true,
+							gravity: "top", // `top` or `bottom`
+							position: "right", // `left`, `center` or `right`
+							stopOnFocus: true, // Prevents dismissing of toast on hover
+							style: {
+								background: "#333", // Dark background color
+								color: "#fffff", // Red text color for error
+								boxShadow: "0 0 10px rgba(0, 0, 0, 0.5)", // Slight shadow for depth
+								padding: "16px", // Additional padding for better readability
+								borderRadius: "8px" // Rounded corners
+							},
+							onClick: function () { } // Callback after click
+						}).showToast();
+					} else {
+						loaderContainer.classList.add('active');
+
+						try {
+							// Send data using Axios with async/await
+							const response = await AxiosInstance.put(`/api/items/${itemID}`, formData);
+
+
+							Toastify({
+								text: "✅ Product has been updated successfully!",
+								duration: 5000,
+
+								newWindow: true,
+								close: true,
+								gravity: "top", // `top` or `bottom`
+								position: "right", // `left`, `center` or `right`
+								stopOnFocus: true, // Prevents dismissing of toast on hover
+								style: {
+									background: "#333", // Dark background color
+									color: "#00ff00", // Green text color for success
+									boxShadow: "0 0 10px rgba(0, 0, 0, 0.5)", // Slight shadow for depth
+									padding: "16px", // Additional padding for better readability
+									borderRadius: "8px" // Rounded corners
+								},
+								onClick: function () { } // Callback after click
+							}).showToast();
+							window.location.href = 'products.html'
+						} catch (error) {
+							Toastify({
+								text: "❌ There was an error. please try again later",
+								duration: 5000,
+
+								newWindow: true,
+								close: true,
+								gravity: "top", // `top` or `bottom`
+								position: "right", // `left`, `center` or `right`
+								stopOnFocus: true, // Prevents dismissing of toast on hover
+								style: {
+									background: "#333", // Dark background color
+									color: "#fffff", // Red text color for error
+									boxShadow: "0 0 10px rgba(0, 0, 0, 0.5)", // Slight shadow for depth
+									padding: "16px", // Additional padding for better readability
+									borderRadius: "8px" // Rounded corners
+								},
+								onClick: function () { } // Callback after click
+							}).showToast();
+						} finally {
+							loaderContainer.classList.remove('active');
+						}
+					}
+
+
+				});
+
+
+
+				nextPageButton.addEventListener('click', function (event) {
+					event.preventDefault(); // Prevent the default behavior (form submission or link navigation)
+					loadItems('', '', ++currentPageIndex)
+
+				});
+				previousPageButton.addEventListener('click', function (event) {
+					event.preventDefault(); // Prevent the default behavior (form submission or link navigation)
+					loadItems('', '', --currentPageIndex)
+
+				});
+
+				document.getElementById('downloadPdf').addEventListener('click', function () {
+					const { jsPDF } = window.jspdf;
+					const doc = new jsPDF();
+
+					// Add logo
+					const logoImg = new Image();
+					logoImg.src = 'assets/images/logo_s.png'; // Path to your logo image
+					logoImg.onload = function () {
+						const aspectRatio = logoImg.width / logoImg.height;
+						const maxWidth = 30; // Maximum width for the logo
+						const maxHeight = 30 / aspectRatio; // Calculate the height based on aspect ratio
+						doc.addImage(logoImg, 'PNG', 10, 10, maxWidth, maxHeight); // Add the logo at position (10, 10) with maximum width and calculated height
+
+						// Add company name and address
+						doc.setFontSize(10); // Reduced font size
+						doc.text('Sewanagala Ayurweda', 155, 20);
+						doc.text('Sewanagala, Sri Lanka', 155, 25);
+						// Add date and time
+						const currentDate = new Date();
+						const dateString = currentDate.toLocaleDateString();
+						const timeString = currentDate.toLocaleTimeString();
+						doc.setFontSize(10);
+						doc.text(`Date: ${dateString}`, 165, 35);
+						doc.text(`Time: ${timeString}`, 165, 40);
+						doc.setFontSize(20);
+						doc.text('Inventory Report', 77, 25);
+						// Extract the table headers
+						const headers = Array.from(document.querySelectorAll('#table thead th'))
+							.map(th => th.textContent)
+							.filter((header, index) => index !== 8); // Exclude the "Action" column (index 8)
+
+						// Extract the table data
+						const data = Array.from(document.querySelectorAll('#table tbody tr')).map(tr =>
+							Array.from(tr.querySelectorAll('td'))
+								.map(td => td.textContent)
+								.filter((cell, index) => index !== 8) // Exclude the "Action" column (index 8)
+						);
+
+						doc.autoTable({
+							head: [headers],
+							body: data,
+							startY: 50, // Adjust to start after the header content
+							theme: 'grid',
+							headStyles: { fillColor: [22, 160, 133] },
+							alternateRowStyles: { fillColor: [238, 238, 238] },
+							styles: { fontSize: 10, cellPadding: 3 },
+						});
+
+						doc.save('Sewanagala-Ayurweda-Inventory-Report.pdf');
+					};
+				});
+
+
+
+
+				async function fetchShops() {
+					try {
+						let url = '/api/shops?';
+						loaderContainer.classList.add('active');
+
+						const response = (await AxiosInstance.get(url)).data;
+						console.log(response)
+
+						let rows = '';
+
+						shopSelect.innerHTML = '';
+						shopSelectModel.innerHTML = '';
+						shopSelectUpdateModel.innerHTML = '';
+
+						const option1 = document.createElement('option');
+						const option2 = document.createElement('option');
+						const option3 = document.createElement('option');
+						option1.value = "";
+						option1.textContent = "Select shop";
+						option2.value = "";
+						option2.textContent = "Select shop";
+
+
+						// Set the 'selected' attribute for the default option
+
+						shopSelectModel.appendChild(option1)
+						shopSelect.appendChild(option2);
+
+						// Populate the select element with options
+						response.forEach(shop => {
+							const option1 = document.createElement('option');
+							const option2 = document.createElement('option');
+							const option3 = document.createElement('option');
+							option1.value = shop.id;
+							option1.textContent = shop.name + " " + shop.branch;
+							option2.value = shop.id;
+							option2.textContent = shop.name + " " + shop.branch;
+							option3.value = shop.id;
+							option3.textContent = shop.name + " " + shop.branch;
+
+							// Set the 'selected' attribute for the default option
+							if (shop.id === '') {
+								option1.selected = true;
+								option2.selected = true;
+							}
+							shopSelectModel.appendChild(option1)
+							shopSelect.appendChild(option2);
+							shopSelectUpdateModel.appendChild(option3)
+
+						});
+
+					} catch (error) {
+						Toastify({
+							text: `❌ ${error.message}`,
+							duration: 5000,
+
+							newWindow: true,
+							close: true,
+							gravity: "top", // `top` or `bottom`
+							position: "right", // `left`, `center` or `right`
+							stopOnFocus: true, // Prevents dismissing of toast on hover
+							style: {
+								background: "#333", // Dark background color
+								color: "#fffff", // Red text color for error
+								boxShadow: "0 0 10px rgba(0, 0, 0, 0.5)", // Slight shadow for depth
+								padding: "16px", // Additional padding for better readability
+								borderRadius: "8px" // Rounded corners
+							},
+							onClick: function () { } // Callback after click
+						}).showToast();
+					} finally {
+						loaderContainer.classList.remove('active');
+					}
+				}
+
+				document.addEventListener('DOMContentLoaded', function () {
+
+					fetchShops()
+					loadItems();
+
+					document.getElementById('table').addEventListener('click', function (event) {
+						if (event.target.closest('.edit-button')) {
+							const button = event.target.closest('.edit-button');
+
+							// Get data attributes from the clicked button
+							const id = button.getAttribute('data-id');
+							const itemId = button.getAttribute('data-item-id');
+							const name = button.getAttribute('data-name');
+							const type = button.getAttribute('data-type');
+							const quantity = button.getAttribute('data-quantity');
+							const sellingPrice = button.getAttribute('data-selling-price');
+							const actualPrice = button.getAttribute('data-actual-price');
+							const shop = button.getAttribute('data-shop');
+
+							itemID = id
+
+							// Set the modal form values
+							document.getElementById('updateProductId').value = itemId;
+							document.getElementById('updateProductName').value = name;
+							document.getElementById('updateProductType').value = type;
+							document.getElementById('updateQty').value = quantity;
+							document.getElementById('updateSellingPrice').value = sellingPrice;
+							document.getElementById('updateActualPrice').value = actualPrice;
+							document.getElementById('updateShop').value = shop;
+						}
+					});
+				});
+
+				function updateDateTime() {
+					const dateTimeContainer = document.getElementById('date-time-container');
+					const now = new Date();
+
+					const hours = now.getHours();
+					const minutes = now.getMinutes();
+					const seconds = now.getSeconds();
+					const ampm = hours >= 12 ? 'PM' : 'AM';
+
+					const formattedTime = `${hours % 12 || 12}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} ${ampm}`;
+
+					const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+					const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+					const day = days[now.getDay()];
+					const date = now.getDate();
+					const month = months[now.getMonth()];
+					const year = now.getFullYear();
+
+					const formattedDate = `${date}${getOrdinalSuffix(date)} ${month} ${year}`;
+
+					dateTimeContainer.innerHTML = `${formattedTime} | ${formattedDate}`;
+				}
+
+				function getOrdinalSuffix(n) {
+					const s = ["th", "st", "nd", "rd"];
+					const v = n % 100;
+					return s[(v - 20) % 10] || s[v] || s[0];
+				}
+
+				setInterval(updateDateTime, 1000);
+				updateDateTime();
+
+			</script>
+
+			<!-- Page Specific JS -->
+			<script src="assets/js/app.js"></script>
+</body>
+
+</html>

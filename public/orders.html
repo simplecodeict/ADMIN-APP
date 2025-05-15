@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Manu Ayurvedaya Inventory Management System</title>
+
+	<!-- Meta -->
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<meta name="description" content="Portal - Bootstrap 5 Admin Dashboard Template For Developers" />
+	<meta name="author" content="Xiaoying Riley at 3rd Wave Media" />
+	<link rel="shortcut icon" href="assets/images/icon.ico" />
+
+	<!-- FontAwesome JS-->
+	<script defer src="assets/plugins/fontawesome/js/all.min.js"></script>
+
+	<!-- App CSS -->
+	<link id="theme-style" rel="stylesheet" href="assets/css/portal.css" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+	<style>
+		/* Nested table styles */
+		.nested-table {
+			display: none;
+			width: 100%;
+			margin-top: 10px;
+		}
+
+		.nested-table table,
+		.nested-table th,
+		.nested-table td {
+			border: 1px solid #333;
+		}
+
+		.nested-table th,
+		.nested-table td {
+			padding: 8px;
+			text-align: left;
+		}
+
+		.nested-table thead {
+			background-color: #333;
+			color: white;
+		}
+
+		.nested-table tbody tr {
+			background-color: #555;
+			color: white;
+		}
+
+		/* View button styles */
+		.view-btn {
+			cursor: pointer;
+			color: blue;
+			text-decoration: underline;
+		}
+
+		.total-sale {
+			left: 30px;
+			top: 10px;
+			font-size: 24px;
+			color: green;
+		}
+
+		#dateRangePicker {
+			padding: 7px;
+			font-size: 15px;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+		}
+
+		#monthPicker {
+			padding: 7px;
+			font-size: 15px;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+		}
+
+		#weekPicker {
+			padding: 7px;
+			font-size: 15px;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+		}
+
+		.loader-container {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(255, 255, 255, 0.5);
+			/* Semi-transparent gray overlay */
+			display: none;
+			/* Initially hidden */
+			justify-content: center;
+			align-items: center;
+			z-index: 1000;
+			backdrop-filter: blur(3px);
+		}
+
+		.loader-container.active {
+			display: flex;
+			/* Show loader when active */
+		}
+
+		/* Loader styling */
+		.loader {
+			max-width: 10%;
+			/* Adjust size of the loader */
+			height: auto;
+		}
+
+		/* Center loader within loader container */
+		.loader img {
+			display: block;
+			margin: 0 auto;
+		}
+
+		.date-time-container {
+			position: relative;
+			right: 0;
+			top: 0;
+			padding: 10px;
+			font-family: Arial, sans-serif;
+			font-weight: 700;
+			font-size: 16px;
+		}
+	</style>
+</head>
+
+
+
+<body class="app">
+	<header class="app-header fixed-top">
+		<div class="app-header-inner">
+			<div class="container-fluid py-2">
+				<div class="app-header-content">
+					<div class="row justify-content-between align-items-center">
+						<center>
+							<div class="date-time-container" id="date-time-container"></div>
+						</center>
+						<div class="col-auto">
+							<a id="sidepanel-toggler" class="sidepanel-toggler d-inline-block d-xl-none" href="#">
+								<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30"
+									role="img">
+									<title>Menu</title>
+									<path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10"
+										stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path>
+								</svg>
+							</a>
+						</div>
+						<!--//col-->
+						<div class="search-mobile-trigger d-sm-none col">
+							<i class="search-mobile-trigger-icon fa-solid fa-magnifying-glass"></i>
+						</div>
+						<!--//app-utilities-->
+					</div>
+					<!--//row-->
+				</div>
+				<!--//app-header-content-->
+			</div>
+			<!--//container-fluid-->
+		</div>
+		<!--//app-header-inner-->
+		<div id="app-sidepanel" class="app-sidepanel">
+			<div id="sidepanel-drop" class="sidepanel-drop"></div>
+			<div class="sidepanel-inner d-flex flex-column">
+				<a href="#" id="sidepanel-close" class="sidepanel-close d-xl-none">&times;</a>
+				<div class="app-branding">
+					<a class="app-logo" href="index.html"><img
+							style="width: 175px; height: 90px; margin-bottom: 20px; margin-left: 15px; padding-top: 30px;"
+							src="assets/images/logo_en.png" alt="logo" /></a>
+				</div>
+				<!--//app-branding-->
+				<nav id="app-nav-main" class="app-nav app-nav-main flex-grow-1" style="margin-top: 120px;">
+					<ul class="app-menu list-unstyled accordion" id="menu-accordion" style="line-height: 80px;">
+						<li class="nav-item">
+							<a class="nav-link" href="index.html">
+								<span class="nav-icon">
+									<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-house-door"
+										fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+										<path fill-rule="evenodd"
+											d="M7.646 1.146a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 .146.354v7a.5.5 0 0 1-.5.5H9.5a.5.5 0 0 1-.5-.5v-4H7v4a.5.5 0 0 1-.5.5H2a.5.5 0 0 1-.5-.5v-7a.5.5 0 0 1 .146-.354l6-6zM2.5 7.707V14H6v-4a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v4h3.5V7.707L8 2.207l-5.5 5.5z" />
+										<path fill-rule="evenodd"
+											d="M13 2.5V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z" />
+									</svg>
+								</span>
+								<span class="nav-link-text">Dashboard</span> </a><!--//nav-link-->
+						</li>
+						<!--//nav-item-->
+						<li class="nav-item">
+							<!--//Bootstrap Icons: https://icons.getbootstrap.com/ -->
+							<a class="nav-link" href="products.html">
+								<span class="nav-icon">
+									<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-columns-gap"
+										fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+										<path fill-rule="evenodd"
+											d="M6 1H1v3h5V1zM1 0a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1H1zm14 12h-5v3h5v-3zm-5-1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-5zM6 8H1v7h5V8zM1 7a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H1zm14-6h-5v7h5V1zm-5-1a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1h-5z" />
+									</svg>
+								</span>
+								<span class="nav-link-text">Products</span> </a><!--//nav-link-->
+						</li>
+						<!--//nav-item-->
+						<li class="nav-item">
+							<!--//Bootstrap Icons: https://icons.getbootstrap.com/ -->
+							<a class="nav-link active" href="orders.html">
+								<span class="nav-icon">
+									<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-card-list"
+										fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+										<path fill-rule="evenodd"
+											d="M14.5 3h-13a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z" />
+										<path fill-rule="evenodd"
+											d="M5 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 5 8zm0-2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm0 5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5z" />
+										<circle cx="3.5" cy="5.5" r=".5" />
+										<circle cx="3.5" cy="8" r=".5" />
+										<circle cx="3.5" cy="10.5" r=".5" />
+									</svg>
+								</span>
+								<span class="nav-link-text">Orders</span> </a><!--//nav-link-->
+						</li>
+
+
+						<!--//nav-item-->
+					</ul>
+					<!--//app-menu-->
+				</nav>
+				<!--//app-nav-->
+				<p style="text-align: center; padding: 0px;">© 2024. Sewanagala Ayurwedaya</p>
+				<small style="text-align: center; padding-bottom: 20px; margin-top: -10px;" class="copyright">Developed
+					by |
+					<a class="app-link" href="#">SimpleCodeICT</a>
+				</small>
+				<div class="app-sidepanel-footer">
+					<nav class="app-nav app-nav-footer">
+						<ul class="app-menu footer-menu list-unstyled">
+
+							<!--//nav-item-->
+							<li class="nav-item">
+								<!--//Bootstrap Icons: https://icons.getbootstrap.com/ -->
+								<a class="nav-link" href="login.html">
+									<span class="nav-icon">
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+											fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+											<path fill-rule="evenodd"
+												d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z" />
+											<path fill-rule="evenodd"
+												d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z" />
+										</svg>
+									</span>
+									<span class="nav-link-text">Log Out</span> </a><!--//nav-link-->
+							</li>
+							<!--//nav-item-->
+						</ul>
+						<!--//footer-menu-->
+					</nav>
+				</div>
+				<!--//app-sidepanel-footer-->
+			</div>
+			<!--//sidepanel-inner-->
+		</div>
+		<!--//app-sidepanel-->
+	</header>
+	<!--//app-header-->
+
+
+	<!-- Loader container with overlay -->
+	<div id="loaderContainer" class="loader-container">
+		<!-- GIF Loader -->
+		<img src="assets/images/loader.gif" class="loader" alt="Loading GIF">
+	</div>
+
+
+	<div class="app-wrapper">
+		<div class="app-content pt-3 p-md-3 p-lg-4">
+			<div class="container-xl">
+				<div class="row g-3 mb-4 align-items-center justify-content-between">
+					<div class="col-auto">
+						<h1 class="app-page-title mb-0">Orders</h1>
+					</div>
+					<div class="col-auto">
+						<div class="page-utilities">
+							<div class="row g-2 justify-content-start justify-content-md-end align-items-center">
+								<!-- <div class="col-auto">
+									<form class="docs-search-form row gx-1 align-items-center">
+										<div class="col-auto">
+											<input type="text" id="search-docs" name="searchdocs"
+												class="form-control search-docs" placeholder="Search" />
+										</div>
+										<div class="col-auto">
+											<button type="submit" class="btn app-btn-secondary">
+												Search
+											</button>
+										</div>
+									</form>
+								</div> -->
+								<!--//col-->
+								<div class="col-auto">
+									<select class="form-select w-auto" id="shop_for_search">
+
+									</select>
+								</div>
+								<div class="col-auto">
+									<input type="month" id="monthPicker" onchange="getSelectedMonthYear(this.value)">
+								</div>
+								<div class="col-auto">
+									<input type="week" id="weekPicker" onchange="getWeekDates(this.value)">
+								</div>
+								<div class="col-auto">
+									<input type="text" id="dateRangePicker" placeholder="Select Date Range">
+								</div>
+								<div class="col-auto" id="date-range">
+									<button class="btn app-btn-secondary" onclick="ClearFilers()">Clear Filters</button>
+								</div>
+
+								<!-- <div class="col-auto">
+									<button class="btn app-btn-primary" id="downloadPdf"><svg width="1em" height="1em"
+											viewBox="0 0 16 16" class="bi bi-download me-1" fill="currentColor"
+											xmlns="http://www.w3.org/2000/svg">
+											<path fill-rule="evenodd"
+												d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
+											<path fill-rule="evenodd"
+												d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z" />
+										</svg>Download Report</button>
+								</div> -->
+							</div>
+							<!--//row-->
+						</div>
+						<!--//table-utilities-->
+					</div>
+					<!--//col-auto-->
+				</div>
+				<!--//row-->
+
+				<div class="tab-content" id="orders-table-tab-content">
+					<div class="tab-pane fade show active" id="orders-all" role="tabpanel"
+						aria-labelledby="orders-all-tab">
+						<div class="app-card app-card-orders-table shadow-sm mb-5">
+							<div class="app-card-body">
+								<div class="table-responsive" style="padding-left: 20px; padding-top: 10px;">
+									<table id="table" class="table app-table-hover mb-0 text-left">
+										<thead>
+											<tr>
+												<th class="cell">No</th>
+												<th class="cell">Cashier</th>
+												<th class="cell">Shop</th>
+												<th class="cell">Date</th>
+												<th class="cell">Total Selling Price</th>
+												<th class="cell">Total Actual Price</th>
+												<th class="cell">Action</th>
+												<!-- <th class="cell"></th> -->
+											</tr>
+										</thead>
+										<tbody id="orders-table-body">
+										</tbody>
+									</table>
+									<div class="d-flex justify-content-between align-items-center">
+										<h2 class="total-sale" id="totalSale"
+											style="margin-left: auto; padding: 10px; color: rgb(230, 85, 59);"></h2>
+									</div>
+									<div class="d-flex justify-content-between align-items-center">
+										<h2 id="totalProfit" class="total-sale"
+											style="margin-left: auto; margin-right: 10px; color: rgb(230, 85, 59);">
+										</h2>
+									</div>
+								</div>
+
+								<!--//table-responsive-->
+							</div>
+							<!--//app-card-body-->
+						</div>
+						<!--//app-card-->
+						<nav class="app-pagination">
+							<ul class="pagination justify-content-center">
+								<li class="page-item">
+									<button class="page-link" id="previousPage">Previous</button>
+								</li>
+								<li class="page-item">
+									<button class="page-link" id="nextPage">Next</button>
+								</li>
+							</ul>
+						</nav>
+					</div>
+				</div>
+
+				<!-- Javascript -->
+				<script src="assets/plugins/popper.min.js"></script>
+				<script src="assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+				<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+				<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+				<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+				<script
+					src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+				<script src="axiosConfig.js"></script>
+				<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+				<script>
+					let currentPageIndex = 1
+					const nextPageButton = document.getElementById('nextPage');
+					const previousPageButton = document.getElementById('previousPage');
+					const loaderContainer = document.getElementById('loaderContainer');
+					const shopSelect = document.getElementById('shop_for_search');
+
+					async function fetchOrders(filter = {}, page = currentPageIndex) {
+						try {
+							loaderContainer.classList.add('active');
+							let url = '/api/orders?';
+							if (filter.shop_id) url += `filter[shop_id]=${filter.shop_id}&`;
+							if (filter.month) url += `filter[month]=${filter.month}&`;
+							if (filter.week) url += `filter[week]=${filter.week}&`;
+							if (filter.date) url += `filter[date]=${filter.date}&`;
+							if (page) url += `page=${page}`;
+
+							const response = await AxiosInstance.get(url);
+							console.log(response)
+							const orders = response.data.data;
+							const tbody = document.getElementById('orders-table-body');
+							tbody.innerHTML = '';
+							let totalSale = 0.00
+							let totalCost = 0.00
+
+							orders.forEach((order, index) => {
+
+								const date = new Date(order.created_at);
+								const formattedDate = date.toISOString().split('T')[0];
+								const row = `
+							<tr>
+								<td class="cell">${index + 1}</td>
+								<td class="cell">${order.user.full_name}</td>
+								<td class="cell">${order.shop.name + "-" + order.shop.branch}</td>
+								<td class="cell">${formattedDate}</td>
+								<td class="cell">${parseFloat(order.total_selling_price).toFixed(2)} LKR</td>
+								<td class="cell">${parseFloat(order.total_actual_price).toFixed(2)} LKR</td>
+								<td><span class="view-btn" onclick="toggleItems(this)">View</span></td>
+							</tr>
+							<tr class="nested-table">
+								<td colspan="7">
+									<table style="width:100%; background-color: white; color: black;">
+									<thead>
+										<tr style="background-color: white; color: black;">
+										<th>Item ID</th>
+										<th>Item Name</th>
+										<th>Quantity</th>
+										<th>Price</th>
+										</tr>
+									</thead>
+									<tbody>
+										${order.order_details.map(item => `
+										<tr style="background-color: white; color: black;">
+										<td>${item.item.item_id}</td>
+										<td>${item.item.name}</td>
+										<td>${item.num_of_items}</td>
+										<td>RS.${item.total_price_per_units}</td>
+										</tr>`).join('')}
+									</tbody>
+									</table>
+								</td>
+								</tr>
+								`;
+
+								totalSale += parseFloat(order.total_selling_price);
+								totalCost += parseFloat(order.total_actual_price);
+								tbody.insertAdjacentHTML('beforeend', row);
+							});
+							document.getElementById('totalSale').innerText = `Total Sale: LKR ${totalSale.toFixed(2)}`;
+							document.getElementById('totalProfit').innerText = `Total Profit: LKR ${(totalSale.toFixed(2) - totalCost.toFixed(2)).toFixed(2)}`;
+							updatePagination(response.data.current_page, response.data.last_page);
+
+						} catch (error) {
+							Toastify({
+								text: `❌ ${error.message}`,
+								duration: 5000,
+								destination: "https://github.com/apvarun/toastify-js",
+								newWindow: true,
+								close: true,
+								gravity: "top", // `top` or `bottom`
+								position: "right", // `left`, `center` or `right`
+								stopOnFocus: true, // Prevents dismissing of toast on hover
+								style: {
+									background: "#333", // Dark background color
+									color: "#fffff", // Red text color for error
+									boxShadow: "0 0 10px rgba(0, 0, 0, 0.5)", // Slight shadow for depth
+									padding: "16px", // Additional padding for better readability
+									borderRadius: "8px" // Rounded corners
+								},
+								onClick: function () { } // Callback after click
+							}).showToast();
+						} finally {
+							loaderContainer.classList.remove('active');
+						}
+					}
+
+					function updatePagination(currentPage, last_page) {
+						console.log('ava')
+						currentPageIndex = currentPage
+						if (currentPage == 1) {
+							previousPageButton.disabled = true
+							nextPageButton.disabled = false
+
+						} else {
+							previousPageButton.disabled = false
+							nextPageButton.disabled = false
+						}
+
+						if (currentPage == last_page) {
+							previousPageButton.disabled = false
+							nextPageButton.disabled = true
+
+						}
+					}
+
+
+					function toggleItems(element) {
+						const nestedTableRow = element.parentElement.parentElement.nextElementSibling;
+						if (nestedTableRow.style.display === "none" || nestedTableRow.style.display === "") {
+							nestedTableRow.style.display = "table-row";
+							element.innerText = "Hide";
+						} else {
+							nestedTableRow.style.display = "none";
+							element.innerText = "View";
+						}
+					}
+
+
+
+					let filter = {};
+
+					// date range filter
+					const fp = flatpickr("#dateRangePicker", {
+						mode: "range", // Enable date range selection
+						dateFormat: "Y-m-d", // Date format
+						onClose: function (selectedDates, dateStr, instance) {
+							// Callback function to handle date range selection
+							if (selectedDates.length > 0) {
+								const startDate = selectedDates[0];
+								const endDate = selectedDates[selectedDates.length - 1];
+
+								// Format dates to YYYY-MM-DD
+								const startDateFormatted = formatDate(startDate);
+								const endDateFormatted = formatDate(endDate);
+
+								console.log("Start Date:", startDateFormatted);
+								console.log("End Date:", endDateFormatted);
+
+								filter.date = `${startDateFormatted},${endDateFormatted}`;
+
+								fetchOrders(filter, currentPageIndex);
+							}
+						}
+					});
+
+					// month filter
+					function getSelectedMonthYear(selectedDate) {
+						// Output format: YYYY-MM
+						console.log(selectedDate)
+						filter.month = selectedDate
+						fetchOrders(filter, currentPageIndex);
+					}
+
+					// week filter
+					function getWeekDates(selectedWeek) {
+						const year = selectedWeek.substring(0, 4); // Extract year from YYYY-Www
+						const weekNumber = selectedWeek.substring(6); // Extract week number from YYYY-Www
+
+						// Calculate start date (Monday) of the selected week
+						const startDate = new Date(year, 0, 1 + (weekNumber - 1) * 7); // January 1st + 7 days per week number
+
+						// Adjust start date to Monday of the selected week
+						startDate.setDate(startDate.getDate() - startDate.getDay() + 1);
+
+						// Calculate end date (Sunday) of the selected week
+						const endDate = new Date(startDate);
+						endDate.setDate(endDate.getDate() + 6); // End date is the Sunday of the same week
+
+						// Format dates for display
+						const formattedEndDate = endDate.toISOString().split('T')[0];
+
+
+						filter.week = formattedEndDate
+
+						fetchOrders(filter, currentPageIndex)
+					}
+
+
+					function formatDate(dateString) {
+						const date = new Date(dateString);
+
+						// Extract year, month, and day from the Date object
+						const year = date.getFullYear();
+						const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based, so January is 0
+						const day = String(date.getDate()).padStart(2, '0');
+						return `${year}-${month}-${day}`;
+					}
+
+					document.getElementById('shop_for_search').addEventListener('change', (e) => {
+						filter.shop_id = e.target.value;
+						fetchOrders(filter, currentPageIndex)
+
+					});
+
+					function ClearFilers() {
+						fp.clear();
+						document.getElementById("weekPicker").value = "";
+						document.getElementById("monthPicker").value = "";
+						document.getElementById('shop_for_search').value = ""
+						currentPageIndex = 1
+						fetchOrders();
+					}
+
+					nextPageButton.addEventListener('click', function (event) {
+						event.preventDefault(); // Prevent the default behavior (form submission or link navigation)
+						fetchOrders(filter, ++currentPageIndex)
+
+					});
+					previousPageButton.addEventListener('click', function (event) {
+						event.preventDefault(); // Prevent the default behavior (form submission or link navigation)
+						fetchOrders(filter, --currentPageIndex)
+
+					});
+
+					async function fetchShops() {
+						try {
+							let url = '/api/shops?';
+							loaderContainer.classList.add('active');
+
+							const response = (await AxiosInstance.get(url)).data;
+
+							let rows = '';
+
+							shopSelect.innerHTML = '';
+
+							const option1 = document.createElement('option');
+
+							option1.value = '';
+							option1.textContent = 'Select shop';
+
+
+
+							shopSelect.appendChild(option1);
+
+							// Populate the select element with options
+							response.forEach(shop => {
+								const option1 = document.createElement('option');
+
+								option1.value = shop.id;
+								option1.textContent = shop.name + " " + shop.branch;
+
+
+								// Set the 'selected' attribute for the default option
+								if (shop.id === '') {
+									option1.selected = true;
+								}
+								shopSelect.appendChild(option1);
+
+							});
+
+						} catch (error) {
+							Toastify({
+								text: `❌ ${error.message}`,
+								duration: 5000,
+								destination: "https://github.com/apvarun/toastify-js",
+								newWindow: true,
+								close: true,
+								gravity: "top", // `top` or `bottom`
+								position: "right", // `left`, `center` or `right`
+								stopOnFocus: true, // Prevents dismissing of toast on hover
+								style: {
+									background: "#333", // Dark background color
+									color: "#fffff", // Red text color for error
+									boxShadow: "0 0 10px rgba(0, 0, 0, 0.5)", // Slight shadow for depth
+									padding: "16px", // Additional padding for better readability
+									borderRadius: "8px" // Rounded corners
+								},
+								onClick: function () { } // Callback after click
+							}).showToast();
+						}
+					}
+
+
+					document.addEventListener('DOMContentLoaded', () => {
+						fetchShops()
+						fetchOrders();
+					});
+
+					// document.getElementById('downloadPdf').addEventListener('click', function () {
+					// 	const { jsPDF } = window.jspdf;
+					// 	const doc = new jsPDF();
+
+					// 	// Add logo (optional)
+					// 	// doc.addImage(logoImg, 'PNG', 10, 10, 30, 30); // Example for adding an image
+
+					// 	// Add company name and address
+					// 	doc.setFontSize(12);
+					// 	doc.text('Sewanagala Ayurveda', 50, 15); // Adjust position as needed
+					// 	doc.text('Sewanagala', 50, 25); // Adjust position as needed
+
+					// 	// Add date and time
+					// 	const currentDate = new Date();
+					// 	const dateString = currentDate.toLocaleDateString();
+					// 	const timeString = currentDate.toLocaleTimeString();
+					// 	doc.setFontSize(10);
+					// 	doc.text(`Date: ${dateString} Time: ${timeString}`, 50, 35); // Adjust position as needed
+
+					// 	// Extract the table headers
+					// 	const headers = Array.from(document.querySelectorAll('#table thead th'))
+					// 		.map(th => th.textContent.trim());
+
+					// 	// Extract the table data
+					// 	const data = [];
+					// 	const tableRows = document.querySelectorAll('#table tbody tr');
+
+					// 	tableRows.forEach(row => {
+					// 		const rowData = [];
+					// 		const cells = row.querySelectorAll('.cell');
+					// 		cells.forEach(cell => {
+					// 			rowData.push(cell.textContent.trim());
+					// 		});
+
+					// 		// Check if this row is the one with the nested table
+					// 		const nestedRow = row.nextElementSibling;
+					// 		if (nestedRow && nestedRow.classList.contains('nested-table')) {
+					// 			const nestedTable = nestedRow.querySelector('table');
+					// 			if (nestedTable) {
+					// 				// Get nested table data
+					// 				const nestedRows = nestedTable.querySelectorAll('tbody tr');
+					// 				nestedRows.forEach(nestedRow => {
+					// 					const nestedData = [];
+					// 					const nestedCells = nestedRow.querySelectorAll('td');
+					// 					nestedCells.forEach(nestedCell => {
+					// 						nestedData.push(nestedCell.textContent.trim());
+					// 					});
+					// 					data.push(rowData.concat(nestedData));
+					// 				});
+					// 			}
+					// 		} else {
+					// 			data.push(rowData);
+					// 		}
+					// 	});
+
+					// 	// Define the columns widths (adjust as needed)
+					// 	const colWidths = headers.map(header => 'auto');
+
+					// 	// Generate the PDF table
+					// 	doc.autoTable({
+					// 		head: [headers],
+					// 		body: data,
+					// 		startY: 50, // Adjust to start after the header content
+					// 		theme: 'grid',
+					// 		headStyles: { fillColor: [22, 160, 133], textColor: [255, 255, 255] },
+					// 		alternateRowStyles: { fillColor: [238, 238, 238] },
+					// 		styles: { fontSize: 10, cellPadding: 3, overflow: 'linebreak' },
+					// 		columnStyles: { 0: { cellWidth: 'auto' } }, // Adjust column width as needed
+					// 	});
+
+					// 	// Save the PDF
+					// 	doc.save('sewanagala-ayurveda-orders.pdf');
+					// });
+
+					function updateDateTime() {
+						const dateTimeContainer = document.getElementById('date-time-container');
+						const now = new Date();
+
+						const hours = now.getHours();
+						const minutes = now.getMinutes();
+						const seconds = now.getSeconds();
+						const ampm = hours >= 12 ? 'PM' : 'AM';
+
+						const formattedTime = `${hours % 12 || 12}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} ${ampm}`;
+
+						const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+						const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+						const day = days[now.getDay()];
+						const date = now.getDate();
+						const month = months[now.getMonth()];
+						const year = now.getFullYear();
+
+						const formattedDate = `${date}${getOrdinalSuffix(date)} ${month} ${year}`;
+
+						dateTimeContainer.innerHTML = `${formattedTime} | ${formattedDate}`;
+					}
+
+					function getOrdinalSuffix(n) {
+						const s = ["th", "st", "nd", "rd"];
+						const v = n % 100;
+						return s[(v - 20) % 10] || s[v] || s[0];
+					}
+
+					setInterval(updateDateTime, 1000);
+					updateDateTime();
+
+				</script>
+
+				<!-- Page Specific JS -->
+				<script src="assets/js/app.js"></script>
+</body>
+
+</html>
