@@ -169,9 +169,13 @@
 			<div class="sidepanel-inner d-flex flex-column">
 				<a href="#" id="sidepanel-close" class="sidepanel-close d-xl-none">&times;</a>
 				<div class="app-branding">
-					<a class="app-logo" href="index.html"><img
-							style="width: 175px; height: 90px; margin-bottom: 20px; margin-left: 15px; padding-top: 30px;"
-							src="assets/images/logo_en.png" alt="logo" /></a>
+					<a class="app-logo" href="index.html"><img style="
+                  width: 150px;
+                  height: 160px;
+                  margin-bottom: 20px;
+                  margin-left: 15px;
+                  padding-top: 10px;
+                " src="assets/images/logo_s.png" alt="logo" /></a>
 				</div>
 				<!--//app-branding-->
 				<nav id="app-nav-main" class="app-nav app-nav-main flex-grow-1" style="margin-top: 120px;">
@@ -642,7 +646,7 @@
 
 					}
 				}
-				function loadItems(shop_id = '', shop_name = '', item_id='', page = 1) {
+				function loadItems(shop_id = '', shop_name = '', item_id = '', page = 1) {
 					loaderContainer.classList.add('active');
 					let url = "/api/items";
 
